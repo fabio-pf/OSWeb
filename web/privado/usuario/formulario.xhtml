@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:form id="formEdicao">
+        <h:panelGroup rendered="#{controleUsuario.editando}">
+            <div class="ui-fluid">
+                <p:messages/>
+                <p:panelGrid columns="2" columnClasses="ui-grid-col-2, ui-grid-col-20"
+                             layout="grid" styleClass="ui-panelgrid-blank">
+                    <f:facet name="header">
+                        <p:outputLabel value="Edição de Usuários"/>
+                    </f:facet>
+                    <p:outputLabel for="txtID" value="ID"/>
+                    <p:inputText id="txtID" value="#{controleUsuario.objeto.id}" readonly="true"
+                                 size="10"/>
+                    <p:outputLabel for="txtNome" value="Nome"/>
+                    <p:inputText id="txtNome" value="#{controleUsuario.objeto.nome}"
+                                 size="40" maxlength="40"
+                                 required="true"
+                                 requiredMessage="O nome deve ser informado"
+                                 placeholder="Obrigatório"/>
+                    <p:outputLabel for="txtEmail" value="Email"/>
+                    <p:inputText id="txtEmail" value="#{controleUsuario.objeto.email}"
+                                 size="50" maxlength="50"
+                                 required="true"
+                                 requiredMessage="O email deve ser informado"
+                                 placeholder="Obrigatório"/>
+                    <p:outputLabel for="txtNascimento" value="Nascimento"/>
+                    <p:calendar id="txtNascimento" value="#{controleUsuario.objeto.nascimento}"
+                                mask="true" pattern="dd/MM/yyyy"
+                                placeholder="Obrigatório"
+                                required="true"
+                                requiredMessage="O nascimento deve ser informado"
+                                navigator="true">
+                        <f:converter converterId="converterCalendar"/>
+                    </p:calendar>
+                    <p:outputLabel value="Nome de usuário" for="txtUsuario"/>
+                    <p:inputText id="txtUsuario" value="#{controleUsuario.objeto.usuario}"
+                                 size="30" maxlength="30" placeholder="Obrigatório"/>
+                    <p:outputLabel value="Senha" for="txtSenha"/>
+                    <p:password id="txtSenha" value="#{controleUsuario.objeto.senha}"
+                                redisplay="true" size="20" maxlength="20"
+                                placeholder="Obrigatório"/>
+                    <p:commandButton value="Salvar" icon="ui-icon-disk"
+                                     actionListener="#{controleUsuario.salvar()}"
+                                     update="formEdicao :formListagem"/>
+                </p:panelGrid>
+
+                <h:panelGroup id="painelTipoUsuario">
+                    <p:panelGrid columns="2" columnClasses="ui-grid-col-2, ui-grid-col-20"
+                                 layout="grid" styleClass="ui-panelgrid-blank" 
+                                 rendered="#{controleUsuario.editandoTipo_Usuario}">
+                        <f:facet name="header">
+                            <p:outputLabel value="Edição de tipo do usuário"/>
+                        </f:facet>
+                        <p:outputLabel value="Tipo de Usuario"/>
+                        <p:selectOneMenu id="cbxTipoUsuario" value="#{controleUsuario.tipo_Usuario}">
+                            <f:selectItem itemLabel="Selecione um registro"
+                                          noSelectionOption="true"/>
+                            <f:selectItems value="#{controleUsuario.daoTipo_Usuario.listaTodos}"
+                                           var="t" itemLabel="#{t.nome}"/>
+                            <f:converter converterId="converterTipoUsuario"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value=""/>
+                        <p:commandButton id="btnSalvarTipoUsuario" icon="ui-icon-disk"
+                                         actionListener="#{controleUsuario.salvarTipo_Usuario()}"
+                                         process="cbxTipoUsuario btnSalvarTipoUsuario"
+                                         update="painelTipoUsuario listagemTipoUsuario"/>                                         
+                    </p:panelGrid>                
+                    <p:growl/>
+                </h:panelGroup>
+            </div>
+            <h:panelGroup id="listagemTipoUsuario">
+                <h:panelGroup rendered="#{!controleUsuario.editandoTipo_Usuario}">
+                    <p:commandButton value="Novo tipo de usuario" icon="ui-icon-plus"
+                                     actionListener="#{controleUsuario.novoTipo_Usuario()}"
+                                     update="painelTipoUsuario listagemTipoUsuario"
+                                     process="@this"
+                                     id="btnNovoTipoUsuario"/>
+                    <p:dataTable value="#{controleUsuario.objeto.tipos_usuarios}"
+                                 var="obj" reflow="true">
+                        <f:facet name="header">
+                            <p:outputLabel value="Tipos do Usuário"/>
+                        </f:facet>
+                        <p:column headerText="Nome">
+                            <p:outputLabel value="#{obj.nome}"/>
+                        </p:column>
+                        <p:column headerText="Descrição">
+                            <p:outputLabel value="#{obj.descricao}"/>
+                        </p:column>                        
+                        <p:column headerText="Ações">
+                            <div align="center">
+                                <p:commandButton icon="ui-icon-trash"
+                                                 actionListener="#{controleUsuario.removerTipo_Usuario(obj)}"
+                                                 process="@this" update="@form"/>
+                            </div>
+                        </p:column>
+                    </p:dataTable>
+                </h:panelGroup>
+            </h:panelGroup>
+        </h:panelGroup>
+    </h:form>
+</html>
+
